@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.milkwang</groupId>
+    <artifactId>framework</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+    <description>快速开发</description>
+    <url>https://gitee.com/tonggong/fast-framework-bom/tree/master</url>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://mit-license.org/</url>
+        </license>
+    </licenses>
+    <scm>
+        <url>https://gitee.com/tonggong/fast-framework-bom.git</url>
+    </scm>
+    <developers>
+        <developer>
+            <name>NeThunder</name>
+            <email>13122535350@163.com</email>
+        </developer>
+    </developers>
+
+</project>

@@ -1,0 +1,14 @@
+target/
+.project
+.classpath
+.settings
+*.iml
+/.idea/
+bin
+.gradle
+*.DS_Store
+js/
+localconfig.conf
+localconfig.properties
+rebel.xml
+applog/
