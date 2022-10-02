@@ -17,8 +17,8 @@ import java.net.URLDecoder;
  */
 public class TracerUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(TracerUtils.class);
-    public static final String MDC_KEY_IQW_CODE = "iqwCode";
-    public static final String MDC_KEY_REQUEST_ID = "iqwRequestId";
+    public static final String MDC_KEY_MILK_CODE = "milkCode";
+    public static final String MDC_KEY_REQUEST_ID = "milkRequestId";
     public static final String MDC_KEY_REFERER = "referer";
     public static final String MDC_KEY_IP = "ip";
     public static final String MDC_KEY_USERNAME = "username";
@@ -28,7 +28,7 @@ public class TracerUtils {
      * <pre>
      *     ip: 发起请求的ip地址, 用户真实ip
      *     referer: 发起请求的页面链接
-     *     iqwCode: 全局唯一码，从前端贯穿到整个请求链路，方便排障
+     *     milkCode: 全局唯一码，从前端贯穿到整个请求链路，方便排障
      * </pre>
      *
      * @param servletRequest 请求
@@ -39,9 +39,9 @@ public class TracerUtils {
             String ip = IpUtils.getIpAddr(request);
             String page = "";
             String referer = request.getHeader(HttpHelper.REFERER_HEADER);
-            String iqwCode = request.getHeader(HttpHelper.IQW_CODE_HEADER);
-            String requestId = request.getHeader(HttpHelper.IQW_REQUEST_ID_HEADER);
-            String username = request.getHeader(HttpHelper.IQW_USER_NAME);
+            String milkCode = request.getHeader(HttpHelper.MILK_CODE_HEADER);
+            String requestId = request.getHeader(HttpHelper.MILK_REQUEST_ID_HEADER);
+            String username = request.getHeader(HttpHelper.MILK_USER_NAME);
             if (requestId == null || requestId.length() == 0) {
                 requestId = TraderCodeGenerator.generateRequestId();
             }
@@ -52,7 +52,7 @@ public class TracerUtils {
             // 添加MDC参数
             MDC.put(MDC_KEY_IP, ip);
             MDC.put(MDC_KEY_REFERER, page);
-            MDC.put(MDC_KEY_IQW_CODE, iqwCode);
+            MDC.put(MDC_KEY_MILK_CODE, milkCode);
             MDC.put(MDC_KEY_REQUEST_ID, requestId);
             if (StringUtils.isNotEmpty(username)) {
                 MDC.put(MDC_KEY_USERNAME, URLDecoder.decode(username, "utf-8"));
@@ -70,15 +70,15 @@ public class TracerUtils {
         }
     }
 
-    public static String getIqwCode() {
-        return MDC.get(MDC_KEY_IQW_CODE);
+    public static String getMilkCode() {
+        return MDC.get(MDC_KEY_MILK_CODE);
     }
 
-    public static String getIqwRequestId() {
+    public static String getRequestId() {
         return MDC.get(MDC_KEY_REQUEST_ID);
     }
 
-    public static String getIqwUsername() {
+    public static String getMilkUsername() {
         return MDC.get(MDC_KEY_USERNAME);
     }
 }

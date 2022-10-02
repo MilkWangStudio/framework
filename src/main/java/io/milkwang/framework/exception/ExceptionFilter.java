@@ -2,7 +2,9 @@ package io.milkwang.framework.exception;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
+import io.milkwang.framework.rpc.WebUtils;
 import io.milkwang.framework.tracer.TracerUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,21 +34,15 @@ public class ExceptionFilter implements Filter {
             filterChain.doFilter(servletRequest, servletResponse);
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
-            try {
-                HttpServletResponse response = (HttpServletResponse) servletResponse;
-                response.setContentType("application/json;charset=utf-8");
-                PrintWriter writer = response.getWriter();
-                Map<String, Object> json = Maps.newHashMap();
-                json.put("errorCode", 500);
-                json.put("errorMessage", "服务器伐开心,我们正在想办法");
-                json.put("success", false);
-                json.put("showType", ShowTypeEnum.error.getType());
-                json.put("traceId", TracerUtils.getIqwRequestId());
-                writer.write(JSON.toJSONString(json));
-                writer.close();
-                response.flushBuffer();
-            } catch (Exception e1) {
-                logger.error(e.getLocalizedMessage(), e1);
+            HttpServletResponse response = (HttpServletResponse) servletResponse;
+            if (BaseException.class.isAssignableFrom(e.getClass())) {
+                BaseException baseException = (BaseException) e;
+                WebUtils.responseErrorCode(response, baseException.getErrorCode(), baseException.getErrorMessage(), baseException.getShowType());
+            } else {
+                WebUtils.responseErrorCode(response,
+                        "500",
+                        StringUtils.isEmpty(e.getLocalizedMessage()) ? "系统异常，请联系客服" : e.getLocalizedMessage(),
+                        ShowTypeEnum.error);
             }
         }
     }

@@ -28,15 +28,15 @@ public class HttpHelper {
     /**
      * 用户名
      */
-    public static final String IQW_USER_NAME = "Iqw-Username";
+    public static final String MILK_USER_NAME = "Milk-Username";
     /**
      * 每一次请求会生成一个的RequestId
      */
-    public final static String IQW_REQUEST_ID_HEADER = "Iqw-Request-id";
+    public final static String MILK_REQUEST_ID_HEADER = "Milk-Request-id";
     /**
      * 用户唯一的Code,登陆后写到设备上作为指纹码存在
      */
-    public final static String IQW_CODE_HEADER = "Iqw-Code";
+    public final static String MILK_CODE_HEADER = "Milk-Code";
     /**
      * 请求时的Referer地址
      */

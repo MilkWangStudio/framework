@@ -3,6 +3,7 @@ package io.milkwang.framework.rpc;
 
 import io.milkwang.framework.exception.IErrorCode;
 import io.milkwang.framework.exception.ShowTypeEnum;
+import io.milkwang.framework.tracer.TracerUtils;
 
 /**
  * 封装Controller的返回值
@@ -75,6 +76,7 @@ public class Result<T> {
         result.setErrorCode(code);
         result.setErrorMessage(message);
         result.setShowType(showType == null ? 0 : showType.getType());
+        result.traceId = TracerUtils.getRequestId();
         return result;
     }
 
