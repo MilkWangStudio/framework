@@ -2,6 +2,7 @@ package io.milkwang.framework.rpc;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import io.milkwang.framework.exception.ShowTypeEnum;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.List;
 
 /**
  *
@@ -35,7 +37,11 @@ public class WebUtils {
      * @param message         业务结果
      */
     public static void responseErrorCode(HttpServletResponse servletResponse, String code, String message, ShowTypeEnum showType) {
-        WebUtils.responseJson(servletResponse, Result.error(code, message, showType));
+        responseErrorCode(servletResponse, code, message, showType, Lists.newArrayList());
+    }
+
+    public static void responseErrorCode(HttpServletResponse servletResponse, String code, String message, ShowTypeEnum showType, List<String> argumentErrors) {
+        WebUtils.responseJson(servletResponse, Result.error(code, message, showType, argumentErrors));
     }
 
     /**

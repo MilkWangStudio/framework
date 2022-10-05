@@ -1,13 +1,18 @@
 package io.milkwang.framework.exception;
 
 import com.alibaba.fastjson.JSONException;
+import com.google.common.collect.Lists;
+import io.milkwang.framework.rpc.Result;
 import io.milkwang.framework.rpc.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 基础的异常拦截，只能拦截到Controller这一层, 项目中可以继承这个Advice
@@ -49,6 +54,11 @@ public class BaseExceptionAdvice {
     protected void printErrorCode(HttpServletResponse res, String code, String message, ShowTypeEnum showType) {
         logger.error("[[function=printErrorCode]] errorCode = {}, errorMessage = {}, useOutCode = customCode", code, message);
         WebUtils.responseErrorCode(res, code, message, showType);
+    }
+
+    protected void printErrorCode(HttpServletResponse res, String code, String message, ShowTypeEnum showType, List<String> argumentsErrors) {
+        logger.error("[[function=printErrorCode]] errorCode = {}, errorMessage = {}, useOutCode = customCode", code, message);
+        WebUtils.responseErrorCode(res, code, message, showType, argumentsErrors);
     }
 
     /**
@@ -102,5 +112,27 @@ public class BaseExceptionAdvice {
         printErrorCode(res, BaseErrorCode.SYSTEM_THROWABLE);
     }
 
+    @ExceptionHandler(BindException.class)
+    public void handleBindException(HttpServletRequest req, HttpServletResponse res, BindException e) {
+        logger.error(e.getLocalizedMessage(), e);
+        String error = "";
+        List<String> argumentErrors = Lists.newArrayList();
+        if (e.getFieldErrorCount() < 1) {
+            error = e.getMessage();
+        } else {
+            error = resolveFieldErrorString(e.getFieldErrors().get(0));
+            argumentErrors.add(error);
+            for (int i = 1; i < e.getFieldErrorCount(); i++) {
+                argumentErrors.add(resolveFieldErrorString(e.getFieldErrors().get(i)));
+            }
+        }
+        printErrorCode(res, BaseErrorCode.ILLEGAL_ARGUMENT_ERROR.getErrorCode(), error, ShowTypeEnum.error, argumentErrors);
+    }
+
+    protected String resolveFieldErrorString(FieldError error) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("字段:").append(error.getField()).append(",错误:").append(error.getDefaultMessage());
+        return sb.toString();
+    }
 
 }

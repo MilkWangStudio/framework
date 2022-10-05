@@ -1,9 +1,12 @@
 package io.milkwang.framework.rpc;
 
 
+import com.google.common.collect.Lists;
 import io.milkwang.framework.exception.IErrorCode;
 import io.milkwang.framework.exception.ShowTypeEnum;
 import io.milkwang.framework.tracer.TracerUtils;
+
+import java.util.List;
 
 /**
  * 封装Controller的返回值
@@ -21,7 +24,7 @@ import io.milkwang.framework.tracer.TracerUtils;
  * <ul>
  *     <li>由于Result继承了LinkedHashMap, 因此可以在data同级再增加附加参数返回</li>
  *     <li>errorCode/errorMessage/data 这三个属于保留参数，绝对不能通过put来添加！</li>
- *     <li>一旦对errorCode/errorMessage/data进行了修改，只保证在MVC配置了使用FastJSON来输出的情况下可以符合预期，输出修改后的值。 {@link com.alibaba.fastjson.serializer.SerializeConfig#getObjectWriter(Class)}</li>
+ *     <li>一旦对errorCode/errorMessage/data进行了修改，只保证在MVC配置了使用FastJSON来输出的情况下可以符合预期，输出修改后的值。</li>
  * </ul>
  *
  * @author nethunder
@@ -55,6 +58,10 @@ public class Result<T> {
      * 业务响应结果
      */
     private T data;
+    /**
+     * 参数错误信息列表
+     */
+    private List<String> argumentsErrors;
 
     public static <T> Result<T> create() {
         return new Result<>();
@@ -72,11 +79,16 @@ public class Result<T> {
     }
 
     public static <T> Result<T> error(String code, String message, ShowTypeEnum showType) {
+        return error(code, message, showType, Lists.newArrayList());
+    }
+
+    public static <T> Result<T> error(String code, String message, ShowTypeEnum showType, List<String> argumentsErrors) {
         Result<T> result = new Result<T>();
         result.setErrorCode(code);
         result.setErrorMessage(message);
         result.setShowType(showType == null ? 0 : showType.getType());
-        result.traceId = TracerUtils.getRequestId();
+        result.setTraceId(TracerUtils.getRequestId());
+        result.setArgumentsErrors(argumentsErrors);
         return result;
     }
 
@@ -154,6 +166,13 @@ public class Result<T> {
         return data;
     }
 
+    public List<String> getArgumentsErrors() {
+        return argumentsErrors;
+    }
+
+    public void setArgumentsErrors(List<String> argumentsErrors) {
+        this.argumentsErrors = argumentsErrors;
+    }
 
     @Override
     public String toString() {
