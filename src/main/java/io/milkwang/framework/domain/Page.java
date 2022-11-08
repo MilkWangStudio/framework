@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -100,14 +101,18 @@ public class Page<T> {
 
     /**
      * 页数, 根据total和pageSize计算
-     * -1: 未知
      *
-     * @return
+     * @return 页数
      */
     public Integer getPageCount() {
         return getTotalPage();
     }
 
+    /**
+     * 页数, 根据total和pageSize计算
+     *
+     * @return 页数
+     */
     public Integer getTotalPage() {
         if (-1 == total) {
             return -1;
@@ -121,14 +126,13 @@ public class Page<T> {
             return 1;
         }
 
-        return (0 == total % pageSize) ? total / pageSize : total / pageSize
-                + 1;
+        return (0 == total % pageSize) ? total / pageSize : total / pageSize + 1;
     }
 
     /**
      * mysql offset, 0-based, 根据page和pageSize计算
      *
-     * @return
+     * @return 偏移量
      */
     public Integer getOffset() {
         if (page < 1) {
@@ -141,7 +145,7 @@ public class Page<T> {
     /**
      * mysql limit, 0-based, 根据page和pageSize计算
      *
-     * @return
+     * @return 数量
      */
     public Integer getLimit() {
         return pageSize;
@@ -177,18 +181,15 @@ public class Page<T> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        Page other = (Page) obj;
-        if (page != other.page) {
-            return false;
-        }
-        if (pageSize != other.pageSize) {
-            return false;
-        }
-        if (total != other.total) {
-            return false;
-        }
 
-        return true;
+        Page<?> other = (Page<?>) obj;
+        if (!Objects.equals(page, other.page)) {
+            return false;
+        }
+        if (!Objects.equals(pageSize, other.pageSize)) {
+            return false;
+        }
+        return Objects.equals(total, other.total);
     }
 
     /**
@@ -214,19 +215,13 @@ public class Page<T> {
             this.setList(Lists.newArrayList());
             return result;
         }
-        List<F> newList = this.getList().stream()
-                .map(mapFunction)
-                .collect(Collectors.toList());
+        List<F> newList = this.getList().stream().map(mapFunction).collect(Collectors.toList());
         result.setList(newList);
         return result;
     }
 
     @Override
     public String toString() {
-        return "Page{" +
-                "page=" + page +
-                ", pageSize=" + pageSize +
-                ", total=" + total +
-                '}';
+        return "Page{" + "page=" + page + ", pageSize=" + pageSize + ", total=" + total + '}';
     }
 }
